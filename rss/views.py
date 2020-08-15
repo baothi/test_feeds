@@ -6,6 +6,8 @@ from .forms import *
 
 from .models import Category, Product
 from django.views.generic import TemplateView, ListView
+import datetime
+import dateutil.parser
 
 # Create your views here.
 
@@ -24,7 +26,9 @@ def index(request):
             
             feed = feedparser.parse(url) #Parsing XML data
             for entries in feed.entries:
-                product = Product(title=entries.title,description=entries.summary,website=entries.link,category=category)
+                published_time = dateutil.parser.parse(entries.published)
+                print(published_time)
+                product = Product(title=entries.title,description=entries.summary,website=entries.link,category=category,publish=published_time)
                 product.save()
     else:
         feed = None

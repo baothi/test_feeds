@@ -16,7 +16,6 @@
                 <form action="{% url 'search-product-by-category' %}" method="get">
                     {% csrf_token %}
                     <div class="form-group mx-sm-3 mb-2">
-                        <!-- {{formcategory.name}} -->
                         <select name="category" class="form-control" id="id_category">
                             {% for c in categoried %}
                                 <option value="{{c.id}}" selected="">{{c.name}}</option>
@@ -64,12 +63,12 @@
             </table>
             {% include "rss/pagination.html" with page=all_products %}
         </div>
-        <a class="btn btn-primary" href='#'>New Product</a>
+        <!-- <a class="btn btn-primary" href='#'>New Product</a> -->
     </div>
 
 <script>
   function DeleteProduct(id) {
-    if(confirm('Do you want to delete?')) {
+    if(confirm('Do you want to delete ?')) {
       location.href = '/delete_product/' + id;
     }
   }

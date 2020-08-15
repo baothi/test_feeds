@@ -48,7 +48,7 @@
                             <td>{{ product.description|truncatechars:200 }}</td>
                             <td> <a href="{{ product.link }}" class="btn btn-primary">Visit Link</a></td>
                             <td>{{ product.category }}</td>
-                            <td>{{ product.publish }}</td>
+                            <td>{{ product.publish|date:"Y-m-d" }}</td>
                             <td>
                                 <a class="btn btn-primary" href='{% url "update-product" product.id %}'>Update Item</a>
                                 <br/>
@@ -65,13 +65,13 @@
             </table>
             {% include "rss/pagination.html" with page=all_products %}
         </div>
-        <a class="btn btn-primary" href='#'>New Product</a>
+        <!-- <a class="btn btn-primary" href='#'>New Product</a> -->
     </div>
 
 <script>
   function DeleteProduct(id) {
     if(confirm('Do you want to delete?')) {
-      location.href = '/delete_product/' + id;
+        location.href = '/delete_product/' + id;
     }
   }
 </script>

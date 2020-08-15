@@ -14,13 +14,14 @@
             </div>
             <div class="col-md-6 col-md-offset-2">
                 {% if categoried %}
-                    <form action="{% url 'search-product-by-category' %}" method="get">
+                    <form action="{% url 'index' %}" method="get">
                         {% csrf_token %}
                         <div class="form-group mx-sm-3 mb-2">
                             <select name="category" class="form-control" id="id_category">
-                                {% for c in categoried %}
-                                    <option value="{{c.id}}" selected="">{{c.name}}</option>
-                                {% endfor %}
+                                <option value="">---Choose category---</option>
+                                    {% for c in categoried %}
+                                        <option value="{{c.id}}" {%if c.id == selected_category%} selected {%endif%}>{{c.name}}</option>
+                                    {% endfor %}
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary mb-2">Search Category</button>
@@ -43,7 +44,7 @@
                 <tbody>
                     {% for product in all_products %}
                         <tr class="text-center">
-                            <td>{{ forloop.counter }}</td>
+                            <td>{{ forloop.counter|add:offset }}</td>
                             <td>{{ product.title }}</td>
                             <td>{{ product.description|truncatechars:200 }}</td>
                             <td> <a href="{{ product.website }}" class="btn btn-primary">Visit Link</a></td>

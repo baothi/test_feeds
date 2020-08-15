@@ -27,27 +27,35 @@ def index(request):
             feed = feedparser.parse(url) #Parsing XML data
             for entries in feed.entries:
                 published_time = dateutil.parser.parse(entries.published)
-                print(published_time)
                 product = Product(title=entries.title,description=entries.summary,website=entries.link,category=category,publish=published_time)
                 product.save()
     else:
-        feed = None
         all_products = None
 
-    categoried = Category.objects.all()
-    # formcategory = CategoryForm(instance=category)
-    all_products = Product.objects.all().order_by('id')
-    page = request.GET.get('page',1)
-    paginator = Paginator(all_products, 5)
-    try:
-        all_products = paginator.page(page)
-    except PageNotAnInteger:
-        #if page is not an integer deliver the first page
-        all_products = paginator.page(1)
-    except EmptyPage:
-        #if page is out of range deliver last page of results
-        all_products = paginator.page(paginator.num_pages)
-    return render(request, 'rss/reader.html', { 'page':page, 'all_products' : all_products, 'categoried' : categoried,})
+    
+    PAGESIZE = 5
+    category_id = request.GET.get("category", "")
+    category_id = int(category_id) if category_id else ''
+    all_products = Product.objects.all()
+    
+    if category_id:
+        all_products = all_products.filter(category_id=category_id)
+    
+    all_products = all_products.order_by('id')
+    paginator = Paginator(all_products, PAGESIZE)
+
+    page = int(request.GET.get('page', 1))
+    page = max(min(page, paginator.num_pages), 1)    
+    all_products = paginator.page(page)
+       
+    return render(request, 'rss/reader.html', 
+        { 
+            'page':page, 
+            'offset': (page-1)* PAGESIZE,
+            'all_products' : all_products, 
+            'categoried' : Category.objects.all(),
+            'selected_category': category_id
+        })
 
 def UpdateProduct(request, pk):
     product = Product.objects.get(pk=pk)
@@ -69,34 +77,3 @@ def DeleteProduct(request, pk):
     product = Product.objects.get(pk=pk)
     product.delete()
     return redirect('/')
-
-def SearchProductByCategory(request):
-    if request.GET.get("category"):
-        category_id = request.GET["category"]
-        all_products = Product.objects.filter(category_id__in=category_id).order_by('id')
-        page = request.GET.get('page')
-        paginator = Paginator(all_products, 5)
-        try:
-            all_products = paginator.page(page)
-        except PageNotAnInteger:
-            #if page is not an integer deliver the first page
-            all_products = paginator.page(1)
-        except EmptyPage:
-            #if page is out of range deliver last page of results
-            all_products = paginator.page(paginator.num_pages)
-        categoried = Category.objects.all()
-    else:
-        all_products = Product.objects.filter(category_id__in=category_id).order_by('id')
-        page = request.GET.get('page')
-        paginator = Paginator(all_products, 5)
-        try:
-            all_products = paginator.page(page)
-        except PageNotAnInteger:
-            #if page is not an integer deliver the first page
-            all_products = paginator.page(1)
-        except EmptyPage:
-            #if page is out of range deliver last page of results
-            all_products = paginator.page(paginator.num_pages)
-        categoried = Category.objects.all()
-    return render(request, 'rss/search.html', { 'page':page, 'all_products' : all_products, 'categoried' : categoried,})
-            

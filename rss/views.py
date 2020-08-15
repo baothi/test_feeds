@@ -37,7 +37,7 @@ def index(request):
     categoried = Category.objects.all()
     # formcategory = CategoryForm(instance=category)
     all_products = Product.objects.all().order_by('id')
-    page = request.GET.get('page')
+    page = request.GET.get('page',1)
     paginator = Paginator(all_products, 5)
     try:
         all_products = paginator.page(page)
@@ -85,9 +85,8 @@ def SearchProductByCategory(request):
             #if page is out of range deliver last page of results
             all_products = paginator.page(paginator.num_pages)
         categoried = Category.objects.all()
-        return render(request, 'rss/search.html', { 'page':page, 'all_products' : all_products, 'categoried' : categoried,})
     else:
-        all_products = Product.objects.filter(category_id__in=category_id).order_by('id')
+        all_products = Product.objects.filter(category_id__in=[1]).order_by('id')
         page = request.GET.get('page')
         paginator = Paginator(all_products, 5)
         try:
@@ -99,5 +98,5 @@ def SearchProductByCategory(request):
             #if page is out of range deliver last page of results
             all_products = paginator.page(paginator.num_pages)
         categoried = Category.objects.all()
-        return render(request, 'rss/search.html', { 'page':page, 'all_products' : all_products, 'categoried' : categoried,})
+    return render(request, 'rss/search.html', { 'page':page, 'all_products' : all_products, 'categoried' : categoried,})
             

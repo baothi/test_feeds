@@ -86,7 +86,7 @@ def SearchProductByCategory(request):
             all_products = paginator.page(paginator.num_pages)
         categoried = Category.objects.all()
     else:
-        all_products = Product.objects.filter(category_id__in=[1]).order_by('id')
+        all_products = Product.objects.filter(category_id__in=category_id).order_by('id')
         page = request.GET.get('page')
         paginator = Paginator(all_products, 5)
         try:

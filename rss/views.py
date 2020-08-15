@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import feedparser
+from .forms import *
 
 from .models import Category, Product
+from django.views.generic import TemplateView, ListView
 
 # Create your views here.
 
@@ -15,7 +17,6 @@ def index(request):
         url_text = url_text.split()
         for url in url_text:
             u = url.split('/')
-            print("11111111111111", u[-1])
             if not Category.objects.filter(name=u[-1]).exists():
                 categoried = Category(name=u[-1])
                 categoried.save()
@@ -25,8 +26,74 @@ def index(request):
             for entries in feed.entries:
                 product = Product(title=entries.title,description=entries.summary,website=entries.link,category=category)
                 product.save()
-        all_products = Product.objects.all()
     else:
         feed = None
         all_products = None
-    return render(request, 'rss/reader.html', { 'feed' : feed,'all_products' : all_products, })
+
+    categoried = Category.objects.all()
+    # formcategory = CategoryForm(instance=category)
+    all_products = Product.objects.all().order_by('id')
+    page = request.GET.get('page')
+    paginator = Paginator(all_products, 5)
+    try:
+        all_products = paginator.page(page)
+    except PageNotAnInteger:
+        #if page is not an integer deliver the first page
+        all_products = paginator.page(1)
+    except EmptyPage:
+        #if page is out of range deliver last page of results
+        all_products = paginator.page(paginator.num_pages)
+    return render(request, 'rss/reader.html', { 'page':page, 'all_products' : all_products, 'categoried' : categoried,})
+
+def UpdateProduct(request, pk):
+    product = Product.objects.get(pk=pk)
+    form = ProductForm(instance=product)
+
+    if request.method == 'POST':
+        form = ProductForm(request.POST,instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    
+    return render(request, 'rss/product_form.html', {
+                    'form' : form,
+                    'form_name': form.__class__.__name__,
+                    })
+
+def DeleteProduct(request, pk):
+    product = Product.objects.get(pk=pk)
+    product.delete()
+    return redirect('/')
+
+def SearchProductByCategory(request):
+    if request.GET.get("category"):
+        category_id = request.GET["category"]
+        all_products = Product.objects.filter(category_id__in=category_id).order_by('id')
+        page = request.GET.get('page')
+        paginator = Paginator(all_products, 5)
+        try:
+            all_products = paginator.page(page)
+        except PageNotAnInteger:
+            #if page is not an integer deliver the first page
+            all_products = paginator.page(1)
+        except EmptyPage:
+            #if page is out of range deliver last page of results
+            all_products = paginator.page(paginator.num_pages)
+        categoried = Category.objects.all()
+        return render(request, 'rss/search.html', { 'page':page, 'all_products' : all_products, 'categoried' : categoried,})
+    else:
+        all_products = Product.objects.filter(category_id__in=category_id).order_by('id')
+        page = request.GET.get('page')
+        paginator = Paginator(all_products, 5)
+        try:
+            all_products = paginator.page(page)
+        except PageNotAnInteger:
+            #if page is not an integer deliver the first page
+            all_products = paginator.page(1)
+        except EmptyPage:
+            #if page is out of range deliver last page of results
+            all_products = paginator.page(paginator.num_pages)
+        categoried = Category.objects.all()
+        return render(request, 'rss/search.html', { 'page':page, 'all_products' : all_products, 'categoried' : categoried,})
+            

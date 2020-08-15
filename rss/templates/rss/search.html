@@ -3,7 +3,7 @@
     <br/>
     <div class="container pt-3">
         <div class="row">
-            <div class="col-md-6 col-md-offset-1">
+            <div class="col-sm">
                 <form action="{% url 'index' %}" class="form-inline">
                     <div class="form-group mx-sm-3 mb-2">
                         <input type="text" class="form-control" placeholder="paste link" name="url">
@@ -12,20 +12,19 @@
 
                 </form>
             </div>
-            <div class="col-md-6 col-md-offset-2">
-                {% if categoried %}
-                    <form action="{% url 'search-product-by-category' %}" method="get">
-                        {% csrf_token %}
-                        <div class="form-group mx-sm-3 mb-2">
-                            <select name="category" class="form-control" id="id_category">
-                                {% for c in categoried %}
-                                    <option value="{{c.id}}" selected="">{{c.name}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary mb-2">Search Category</button>
-                    </form>
-                {% endif %}
+            <div class="col-sm">
+                <form action="{% url 'search-product-by-category' %}" method="get">
+                    {% csrf_token %}
+                    <div class="form-group mx-sm-3 mb-2">
+                        <!-- {{formcategory.name}} -->
+                        <select name="category" class="form-control" id="id_category">
+                            {% for c in categoried %}
+                                <option value="{{c.id}}" selected="">{{c.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2">Search Category</button>
+                </form>
             </div>
         <div class="table-responsive">
             <table class="table table-bordered">

@@ -4,11 +4,11 @@
     <div class="container pt-3">
         <div class="row">
             <div class="col-md-6 col-md-offset-1">
-                <form action="{% url 'index' %}" class="form-inline">
+                <form action="{% url 'index' %}" >
                     <div class="form-group mx-sm-3 mb-2">
                         <input type="text" class="form-control" placeholder="paste link" name="url">
                     </div>
-                    <button type="submit" class="btn btn-primary mb-2">Feed Rss</button>
+                    <button type="submit" class="btn btn-outline-primary mb-2">Feed Rss</button>
 
                 </form>
             </div>
@@ -24,10 +24,11 @@
                                     {% endfor %}
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary mb-2">Search Category</button>
+                        <button type="submit" class="btn btn-outline-primary mb-2">Search Category</button>
                     </form>
                 {% endif %}
             </div>
+        </div>
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
@@ -66,7 +67,6 @@
             </table>
             {% include "rss/pagination.html" with page=all_products %}
         </div>
-        <!-- <a class="btn btn-primary" href='#'>New Product</a> -->
     </div>
 
 <script>

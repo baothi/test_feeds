@@ -59,7 +59,7 @@ def index(request):
 
 def UpdateProduct(request, pk):
     page = request.GET.get("page", "")
-    category = request.GET.get("category", "")
+    categori_id = request.GET.get("category", "")
     product = Product.objects.get(pk=pk)
     form = ProductForm(instance=product)
 
@@ -67,7 +67,7 @@ def UpdateProduct(request, pk):
         form = ProductForm(request.POST,instance=product)
         page_id = request.POST['page']
         page_id = int(page_id) if page_id else ''
-        category_id = request.POST['category']
+        category_id = request.POST['selected_category']
         category_id = int(category_id) if category_id else ''
         if form.is_valid():
             form.save()
@@ -79,7 +79,7 @@ def UpdateProduct(request, pk):
                     'form_name': form.__class__.__name__,
                     'product_id': product.id,
                     'page': page,
-                    'category': category,
+                    'categori_id': categori_id,
                     })
 
 def DeleteProduct(request, pk):

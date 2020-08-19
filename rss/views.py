@@ -59,7 +59,7 @@ def index(request):
 
 def UpdateProduct(request, pk):
     page = request.GET.get("page", "")
-    categori_id = request.GET.get("category", "")
+    categori_id = request.GET.get("selected_category", "")
     product = Product.objects.get(pk=pk)
     form = ProductForm(instance=product)
 

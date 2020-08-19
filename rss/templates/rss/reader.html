@@ -52,7 +52,7 @@
                             <td>{{ product.category }}</td>
                             <td>{{ product.publish|date:"Y-m-d" }}</td>
                             <td>
-                                <a class="btn btn-outline-primary mb-2" href='{% url "update-product" product.id %}'>Update Item</a>
+                                <a class="btn btn-outline-primary mb-2" href='update_product/{{product.id}}?page={{page}}&category={{selected_category}}'>Update Item</a>
                                 <br/>
                                 <a class="btn btn-outline-danger mb-2" href='javascript:DeleteProduct({{product.id}})'>Delete Item</a>
                             </td>

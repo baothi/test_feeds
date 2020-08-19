@@ -58,19 +58,28 @@ def index(request):
         })
 
 def UpdateProduct(request, pk):
+    page = request.GET.get("page", "")
+    category = request.GET.get("category", "")
     product = Product.objects.get(pk=pk)
     form = ProductForm(instance=product)
 
     if request.method == 'POST':
         form = ProductForm(request.POST,instance=product)
+        page_id = request.POST['page']
+        page_id = int(page_id) if page_id else ''
+        category_id = request.POST['category']
+        category_id = int(category_id) if category_id else ''
         if form.is_valid():
             form.save()
-            return redirect('/')
+            return redirect('/?page='+str(page_id)+'&category='+str(category_id))
 
     
     return render(request, 'rss/product_form.html', {
                     'form' : form,
                     'form_name': form.__class__.__name__,
+                    'product_id': product.id,
+                    'page': page,
+                    'category': category,
                     })
 
 def DeleteProduct(request, pk):
